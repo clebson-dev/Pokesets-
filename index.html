@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokédex - Teoria de Conjuntos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/venn.js@0.2.20/venn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+
+  <body class="bg-gray-900 text-gray-200 font-sans">
+    <!-- Cabeçalho -->
+    <header class="text-center py-8 bg-gray-800 border-b-4 border-yellow-400">
+      <div class="flex justify-center items-center gap-4">
+        <h1 class="font-pixel text-3xl md:text-5xl text-yellow-400 drop-shadow-lg">
+          PokéSets
+        </h1>
+        <select
+          id="generation-selector"
+          class="bg-gray-700 border border-gray-600 rounded-lg p-2 text-yellow-400 font-pixel text-sm focus:ring-yellow-500 focus:border-yellow-500"
+        >
+          <option value="1">Gen 1</option>
+          <option value="2">Gen 2</option>
+          <option value="3">Gen 3</option>
+        </select>
+      </div>
+      <p class="text-gray-300 mt-2 text-lg">
+        Uma Pokédex com a lógica da Teoria de Conjuntos
+      </p>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+      <!-- Seção de Explicação Matemática -->
+      <details
+        class="bg-gray-800 rounded-lg p-6 mb-8 border border-gray-700 shadow-lg cursor-pointer"
+      >
+        <summary class="font-pixel text-xl text-yellow-400">
+          O Princípio Matemático por Trás da Busca
+        </summary>
+        <div class="mt-6 space-y-6 text-gray-300">
+          <p>
+            Esta Pokédex usa operações da Teoria de Conjuntos para filtrar os
+            Pokémon. Cada grupo de Pokémon com uma característica (como tipo
+            "Fogo") é tratado como um conjunto. Nossos filtros aplicam as
+            seguintes operações:
+          </p>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-gray-900 p-4 rounded-lg">
+              <h3 class="font-bold text-lg text-red-500">
+                1. Interseção (E): A ∩ B
+              </h3>
+              <p class="mt-2 text-sm">
+                Busca por Pokémon que possuam
+                <strong class="text-red-400">TODOS</strong> os tipos
+                selecionados. Ex: "Fogo" E "Voador" retornará o Charizard.
+              </p>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-lg">
+              <h3 class="font-bold text-lg text-blue-500">
+                2. União (OU): A ∪ B
+              </h3>
+              <p class="mt-2 text-sm">
+                Busca por Pokémon que possuam
+                <strong class="text-blue-400">PELO MENOS UM</strong> dos tipos
+                selecionados. Ex: "Água" OU "Gelo" retornará Squirtle e Lapras.
+              </p>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-lg">
+              <h3 class="font-bold text-lg text-green-500">
+                3. Diferença (NÃO): A \ B
+              </h3>
+              <p class="mt-2 text-sm">
+                Busca por Pokémon que
+                <strong class="text-green-400">NÃO POSSUAM NENHUM</strong> dos
+                tipos selecionados. Ex: Pokémon do tipo "Normal" QUE NÃO sejam
+                "Voadores".
+              </p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Campo de Fórmula e Filtros -->
+      <div
+        id="formula-container"
+        class="relative bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 mb-8"
+      >
+        <h3
+          class="font-pixel text-lg text-yellow-400 mb-3 text-center"
+        >
+          Digite sua Fórmula de Conjuntos
+        </h3>
+
+        <div class="flex flex-col sm:flex-row gap-4 items-center">
+          <div class="relative flex-grow w-full">
+            <input
+              type="text"
+              id="formula-input"
+              class="w-full bg-gray-900 border-2 border-gray-600 rounded-lg pl-4 pr-44 py-2 text-gray-200 font-mono focus:border-yellow-500 focus:ring-0 transition-colors"
+              placeholder="Ex: (fire ∩ flying) ∪ water \ poison"
+            />
+            <div class="absolute inset-y-0 right-0 flex items-center pr-2 gap-1">
+              <button
+                id="op-intersect"
+                title="Interseção (E)"
+                class="bg-gray-600 hover:bg-gray-500 text-white font-bold text-lg w-8 h-8 rounded-md transition-colors flex items-center justify-center"
+              >
+                ∩
+              </button>
+              <button
+                id="op-union"
+                title="União (OU)"
+                class="bg-gray-600 hover:bg-gray-500 text-white font-bold text-lg w-8 h-8 rounded-md transition-colors flex items-center justify-center"
+              >
+                ∪
+              </button>
+              <button
+                id="op-difference"
+                title="Diferença (NÃO)"
+                class="bg-gray-600 hover:bg-gray-500 text-white font-bold text-lg w-8 h-8 rounded-md transition-colors flex items-center justify-center"
+              >
+                \
+              </button>
+              <div class="border-l h-6 border-gray-500 mx-1"></div>
+              <button
+                id="toggle-filters-btn"
+                title="Filtros Manuais"
+                class="bg-blue-600 hover:bg-blue-500 text-white font-bold w-8 h-8 rounded-md transition-colors flex items-center justify-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button
+            id="formula-search-btn"
+            class="w-full sm:w-auto bg-yellow-500 text-gray-900 font-bold py-2 px-6 rounded-lg hover:bg-yellow-400 transition-colors duration-300 flex-shrink-0"
+          >
+            Pesquisar
+          </button>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4 mt-4">
+          <button
+            id="challenge-btn"
+            class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
+          >
+            🎲 Gerar
+          </button>
+          <button
+            id="share-btn"
+            class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
+          >
+            🔗 Compartilhar
+          </button>
+          <button
+            id="export-btn"
+            class="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
+          >
+            📋 Exportar Nomes
+          </button>
+        </div>
+
+        <!-- Painel de Filtros Manuais -->
+        <div
+          id="manual-filters-panel"
+          class="absolute top-full left-0 right-0 mt-2 bg-gray-700 border border-gray-600 rounded-lg shadow-xl p-6 z-10 panel-exit"
+        >
+          <div class="grid md:grid-cols-4 gap-6">
+            <div class="md:col-span-3 grid md:grid-cols-3 gap-6">
+              <div>
+                <h3 class="font-pixel text-lg text-red-500 mb-3">
+                  Interseção (E)
+                </h3>
+                <p class="text-xs text-gray-400 mb-3">
+                  COM TODOS estes tipos:
+                </p>
+                <div id="intersection-filters" class="grid grid-cols-2 gap-2"></div>
+              </div>
+              <div>
+                <h3 class="font-pixel text-lg text-blue-500 mb-3">União (OU)</h3>
+                <p class="text-xs text-gray-400 mb-3">
+                  COM PELO MENOS UM destes tipos:
+                </p>
+                <div id="union-filters" class="grid grid-cols-2 gap-2"></div>
+              </div>
+              <div>
+                <h3 class="font-pixel text-lg text-green-500 mb-3">
+                  Diferença (NÃO)
+                </h3>
+                <p class="text-xs text-gray-400 mb-3">
+                  SEM NENHUM destes tipos:
+                </p>
+                <div id="difference-filters" class="grid grid-cols-2 gap-2"></div>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-pixel text-lg text-indigo-400 mb-3">
+                Conjuntos Especiais
+              </h3>
+              <p class="text-xs text-gray-400 mb-3">Filtrar por características:</p>
+              <div id="special-filters" class="flex flex-col gap-2"></div>
+            </div>
+          </div>
+
+          <div class="text-center mt-6">
+            <button
+              id="reset-button"
+              class="bg-yellow-500 text-gray-900 font-bold py-2 px-6 rounded-lg hover:bg-yellow-400 transition-colors duration-300"
+            >
+              Limpar Filtros
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagrama de Venn e Definição de Conjuntos -->
+      <div id="venn-container" class="mb-8">
+        <h3
+          class="font-pixel text-lg text-yellow-400 mb-4 text-center"
+        >
+          Diagrama e Definição dos Conjuntos
+        </h3>
+        <div class="grid lg:grid-cols-2 gap-8 items-start">
+          <div
+            id="venn-diagram"
+            class="flex justify-center items-center min-h-[24rem] md:min-h-[32rem] bg-gray-800 rounded-lg p-4 border border-gray-700 text-gray-500"
+          >
+            Selecione de 1 a 4 tipos nos filtros para gerar o diagrama.
+          </div>
+          <div
+            id="venn-sets-list"
+            class="w-full bg-gray-800 rounded-lg p-6 border border-gray-700 min-h-[24rem] md:min-h-[32rem] font-mono text-sm text-gray-300 overflow-y-auto max-h-[32rem]"
+          >
+            <p class="text-gray-500">
+              Selecione os tipos para ver a definição dos conjuntos.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Análise e Classificação dos Conjuntos -->
+      <div id="sets-analysis-container" class="mb-8">
+        <h3
+          class="font-pixel text-lg text-yellow-400 mb-4 text-center"
+        >
+          Análise e Classificação dos Conjuntos
+        </h3>
+        <div
+          id="sets-analysis-list"
+          class="bg-gray-800 rounded-lg p-6 border border-gray-700 text-sm text-gray-300 space-y-3"
+        >
+          <p class="text-gray-500">
+            Aguardando a seleção de conjuntos para análise...
+          </p>
+        </div>
+      </div>
+
+      <!-- Área de Resultados -->
+      <div id="loader" class="text-center py-10">
+        <p class="font-pixel text-2xl animate-pulse text-yellow-400">
+          Carregando Pokémon...
+        </p>
+        <p class="mt-4">
+          Por favor, aguarde. Estamos capturando os dados!
+        </p>
+      </div>
+
+      <div
+        id="formula-display"
+        class="text-center mb-4 text-lg font-mono text-yellow-300 h-8"
+      ></div>
+      <div id="results-info" class="text-center mb-4"></div>
+      <div
+        id="pokedex"
+        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+      ></div>
+    </main>
+
+    <!-- Modal para detalhes -->
+    <div
+      id="pokemon-modal"
+      class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50 p-4"
+    >
+      <div
+        id="modal-content"
+        class="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-auto relative border-2 border-gray-600 shadow-2xl"
+      ></div>
+    </div>
+
+    <script src="./index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,131 @@
+.font-pixel {
+  font-family: "Press-Start-2P", cursive;
+}
+.font-sans {
+  font-family: "Inter", sans-serif;
+}
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+.card-enter {
+  animation: fadeIn 0.5s ease-in-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.panel-enter {
+  max-height: 500px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+}
+.panel-exit {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+}
+.venn-tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 8px;
+  font-size: 12px;
+  font-family: "Inter", sans-serif;
+  background: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
+  color: white;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+.bg-type-grass {
+  background-color: #78c850;
+  color: white;
+}
+.bg-type-fire {
+  background-color: #f08030;
+  color: white;
+}
+.bg-type-water {
+  background-color: #6890f0;
+  color: white;
+}
+.bg-type-bug {
+  background-color: #a8b820;
+  color: white;
+}
+.bg-type-normal {
+  background-color: #a8a878;
+  color: white;
+}
+.bg-type-poison {
+  background-color: #a040a0;
+  color: white;
+}
+.bg-type-electric {
+  background-color: #f8d030;
+  color: #212121;
+}
+.bg-type-ground {
+  background-color: #e0c068;
+  color: #212121;
+}
+.bg-type-fairy {
+  background-color: #ee99ac;
+  color: white;
+}
+.bg-type-fighting {
+  background-color: #c03028;
+  color: white;
+}
+.bg-type-psychic {
+  background-color: #f85888;
+  color: white;
+}
+.bg-type-rock {
+  background-color: #b8a038;
+  color: white;
+}
+.bg-type-ghost {
+  background-color: #705898;
+  color: white;
+}
+.bg-type-ice {
+  background-color: #98d8d8;
+  color: #212121;
+}
+.bg-type-dragon {
+  background-color: #7038f8;
+  color: white;
+}
+.bg-type-dark {
+  background-color: #705848;
+  color: white;
+}
+.bg-type-steel {
+  background-color: #b8b8d0;
+  color: #212121;
+}
+.bg-type-flying {
+  background-color: #a890f0;
+  color: white;
+}
