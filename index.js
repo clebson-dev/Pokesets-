@@ -20,16 +20,10 @@ const POKEMON_TYPES = [
   "steel",
   "flying",
 ];
-const SPECIAL_SETS = ["legendary"];
 const GENERATION_RANGES = {
   1: { start: 1, end: 151 },
   2: { start: 152, end: 251 },
   3: { start: 252, end: 386 },
-};
-const LEGENDARY_IDS = {
-  1: new Set([144, 145, 146, 150, 151]),
-  2: new Set([243, 244, 245, 249, 250, 251]),
-  3: new Set([377, 378, 379, 380, 381, 382, 383, 384, 385, 386]),
 };
 
 // --- ELEMENTOS DO DOM ---
@@ -57,7 +51,6 @@ const elements = {
     intersection: document.getElementById("intersection-filters"),
     union: document.getElementById("union-filters"),
     difference: document.getElementById("difference-filters"),
-    special: document.getElementById("special-filters"),
   },
 };
 
@@ -68,7 +61,6 @@ let activeFilters = {
   intersection: [],
   union: [],
   difference: [],
-  special: [],
 };
 let vennTooltip = null;
 
@@ -90,13 +82,13 @@ async function loadGeneration(genNumber) {
   elements.loader.style.display = "block";
   elements.pokedex.innerHTML = "";
   const range = GENERATION_RANGES[genNumber];
-  allPokemon = await fetchAllPokemon(range.start, range.end, genNumber);
+  allPokemon = await fetchAllPokemon(range.start, range.end);
   elements.loader.style.display = "none";
   resetFilters();
 }
 
 /** Busca os dados dos Pokémon da API em paralelo */
-async function fetchAllPokemon(startId, endId, genNumber) {
+async function fetchAllPokemon(startId, endId) {
   try {
     const promises = Array.from({ length: endId - startId + 1 }, (_, i) =>
       fetch(`${POKE_API_URL}${startId + i}`).then((res) => res.json())
@@ -107,7 +99,6 @@ async function fetchAllPokemon(startId, endId, genNumber) {
       name: data.name,
       sprite: data.sprites.front_default,
       types: data.types.map((t) => t.type.name),
-      isLegendary: LEGENDARY_IDS[genNumber].has(data.id),
       stats: data.stats.map((s) => ({ name: s.stat.name, value: s.base_stat })),
     }));
   } catch (error) {
@@ -126,12 +117,6 @@ function createFilterCheckboxes() {
       label.innerHTML = `<input type="checkbox" data-type="${type}" data-filter="${filterType}" class="form-checkbox h-4 w-4 rounded bg-gray-900 border-gray-600 text-yellow-500 focus:ring-yellow-600"><span class="bg-type-${type} px-2 py-0.5 rounded text-xs">${type}</span>`;
       elements.filterContainers[filterType].appendChild(label);
     });
-  });
-  SPECIAL_SETS.forEach((set) => {
-    const label = document.createElement("label");
-    label.className = `flex items-center space-x-2 text-sm capitalize p-1 rounded-md cursor-pointer bg-gray-700 hover:bg-gray-600 transition-colors`;
-    label.innerHTML = `<input type="checkbox" data-type="${set}" data-filter="special" class="form-checkbox h-4 w-4 rounded bg-gray-900 border-gray-600 text-indigo-400 focus:ring-indigo-500"><span class="bg-indigo-500 px-2 py-0.5 rounded text-xs">${set}</span>`;
-    elements.filterContainers.special.appendChild(label);
   });
 }
 
@@ -231,13 +216,7 @@ function applyFilters() {
     const differenceMatch =
       activeFilters.difference.length === 0 ||
       !activeFilters.difference.some((type) => pokemon.types.includes(type));
-    const specialMatch =
-      activeFilters.special.length === 0 ||
-      activeFilters.special.every((set) => {
-        if (set === "legendary") return pokemon.isLegendary;
-        return true;
-      });
-    return intersectionMatch && unionMatch && differenceMatch && specialMatch;
+    return intersectionMatch && unionMatch && differenceMatch;
   });
   renderPokemon(currentFilteredPokemon);
   updateFilterFormulaDisplay();
@@ -246,7 +225,7 @@ function applyFilters() {
 
 /** Limpa todos os filtros */
 function resetFilters() {
-  activeFilters = { intersection: [], union: [], difference: [], special: [] };
+  activeFilters = { intersection: [], union: [], difference: [] };
   document
     .querySelectorAll('input[type="checkbox"]')
     .forEach((cb) => (cb.checked = false));
@@ -323,7 +302,7 @@ function handleOperatorButtonClick(operator) {
 
 /** Interpreta a fórmula do input e aplica os filtros */
 function parseFormulaAndApply() {
-  activeFilters = { intersection: [], union: [], difference: [], special: [] };
+  activeFilters = { intersection: [], union: [], difference: [] };
   const formula = elements.formulaInput.value.toLowerCase().trim();
   const diffParts = formula.split("\\");
   const mainFormula = diffParts[0],
@@ -342,14 +321,10 @@ function parseFormulaAndApply() {
     const validTypes = intersectionTypes.filter((t) =>
       POKEMON_TYPES.includes(t)
     );
-    const validSpecial = intersectionTypes.filter((t) =>
-      SPECIAL_SETS.includes(t)
-    );
     if (validTypes.length > 1) activeFilters.intersection.push(...validTypes);
     else if (validTypes.length === 1) activeFilters.union.push(validTypes[0]);
-    if (validSpecial.length > 0) activeFilters.special.push(...validSpecial);
   });
-  ["intersection", "union", "difference", "special"].forEach(
+  ["intersection", "union", "difference"].forEach(
     (key) => (activeFilters[key] = [...new Set(activeFilters[key])])
   );
   syncUIFromFilters();
@@ -370,7 +345,7 @@ function syncFormulaInputFromUI() {
   if (activeFilters.intersection.length > 0)
     parts.push(`(${activeFilters.intersection.join(" ∩ ")})`);
   if (activeFilters.union.length > 0) parts.push(...activeFilters.union);
-  if (activeFilters.special.length > 0) parts.push(...activeFilters.special);
+
   let mainFormula = parts.join(" ∪ ");
   if (activeFilters.difference.length > 0)
     mainFormula += ` \\ ${activeFilters.difference.join(" ∪ ")}`;
@@ -599,72 +574,72 @@ function updateVennSetsList() {
           [...set1.elements].filter((id) => set2.elements.has(id))
         );
         operationsHtml += `
-                            <div class="flex flex-wrap items-baseline mb-2">
-                                <div class="w-full sm:w-1/4 font-bold text-red-400">${
-                                  set1.letter
-                                } ∩ ${set2.letter}</div>
-                                <div class="w-full sm:w-1/4 text-gray-400">|${
-                                  set1.letter
-                                }∩${set2.letter}| = ${intersection.size}</div>
-                                <div class="w-full sm:w-1/2 break-words">= {${
-                                  [...intersection]
-                                    .sort((a, b) => a - b)
-                                    .join(", ") || "∅"
-                                }}</div>
-                            </div>`;
+                                <div class="flex flex-wrap items-baseline mb-2">
+                                    <div class="w-full sm:w-1/4 font-bold text-red-400">${
+                                      set1.letter
+                                    } ∩ ${set2.letter}</div>
+                                    <div class="w-full sm:w-1/4 text-gray-400">|${
+                                      set1.letter
+                                    }∩${set2.letter}| = ${intersection.size}</div>
+                                    <div class="w-full sm:w-1/2 break-words">= {${
+                                      [...intersection]
+                                        .sort((a, b) => a - b)
+                                        .join(", ") || "∅"
+                                    }}</div>
+                                </div>`;
 
         // Union
         const union = new Set([...set1.elements, ...set2.elements]);
         operationsHtml += `
-                            <div class="flex flex-wrap items-baseline mb-2">
-                                <div class="w-full sm:w-1/4 font-bold text-blue-400">${
-                                  set1.letter
-                                } ∪ ${set2.letter}</div>
-                                <div class="w-full sm:w-1/4 text-gray-400">|${
-                                  set1.letter
-                                }∪${set2.letter}| = ${union.size}</div>
-                                <div class="w-full sm:w-1/2 break-words">= {${[
-                                  ...union,
-                                ]
-                                  .sort((a, b) => a - b)
-                                  .join(", ")}}</div>
-                            </div>`;
+                                <div class="flex flex-wrap items-baseline mb-2">
+                                    <div class="w-full sm:w-1/4 font-bold text-blue-400">${
+                                      set1.letter
+                                    } ∪ ${set2.letter}</div>
+                                    <div class="w-full sm:w-1/4 text-gray-400">|${
+                                      set1.letter
+                                    }∪${set2.letter}| = ${union.size}</div>
+                                    <div class="w-full sm:w-1/2 break-words">= {${[
+                                      ...union,
+                                    ]
+                                      .sort((a, b) => a - b)
+                                      .join(", ")}}</div>
+                                </div>`;
 
         // Difference A \ B
         const diff1 = new Set(
           [...set1.elements].filter((id) => !set2.elements.has(id))
         );
         operationsHtml += `
-                            <div class="flex flex-wrap items-baseline mb-2">
-                                <div class="w-full sm:w-1/4 font-bold text-green-400">${
-                                  set1.letter
-                                } \\ ${set2.letter}</div>
-                                <div class="w-full sm:w-1/4 text-gray-400">|${
-                                  set1.letter
-                                }\\${set2.letter}| = ${diff1.size}</div>
-                                <div class="w-full sm:w-1/2 break-words">= {${
-                                  [...diff1].sort((a, b) => a - b).join(", ") ||
-                                  "∅"
-                                }}</div>
-                            </div>`;
+                                <div class="flex flex-wrap items-baseline mb-2">
+                                    <div class="w-full sm:w-1/4 font-bold text-green-400">${
+                                      set1.letter
+                                    } \\ ${set2.letter}</div>
+                                    <div class="w-full sm:w-1/4 text-gray-400">|${
+                                      set1.letter
+                                    }\\${set2.letter}| = ${diff1.size}</div>
+                                    <div class="w-full sm:w-1/2 break-words">= {${
+                                      [...diff1].sort((a, b) => a - b).join(", ") ||
+                                      "∅"
+                                    }}</div>
+                                </div>`;
 
         // Difference B \ A
         const diff2 = new Set(
           [...set2.elements].filter((id) => !set1.elements.has(id))
         );
         operationsHtml += `
-                            <div class="flex flex-wrap items-baseline">
-                                <div class="w-full sm:w-1/4 font-bold text-green-400">${
-                                  set2.letter
-                                } \\ ${set1.letter}</div>
-                                <div class="w-full sm:w-1/4 text-gray-400">|${
-                                  set2.letter
-                                }\\${set1.letter}| = ${diff2.size}</div>
-                                <div class="w-full sm:w-1/2 break-words">= {${
-                                  [...diff2].sort((a, b) => a - b).join(", ") ||
-                                  "∅"
-                                }}</div>
-                            </div>`;
+                                <div class="flex flex-wrap items-baseline">
+                                    <div class="w-full sm:w-1/4 font-bold text-green-400">${
+                                      set2.letter
+                                    } \\ ${set1.letter}</div>
+                                    <div class="w-full sm:w-1/4 text-gray-400">|${
+                                      set2.letter
+                                    }\\${set1.letter}| = ${diff2.size}</div>
+                                    <div class="w-full sm:w-1/2 break-words">= {${
+                                      [...diff2].sort((a, b) => a - b).join(", ") ||
+                                      "∅"
+                                    }}</div>
+                                </div>`;
       }
     }
     elements.vennSetsList.innerHTML = setsHtml + operationsHtml;

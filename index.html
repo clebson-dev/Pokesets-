@@ -185,40 +185,31 @@
           id="manual-filters-panel"
           class="absolute top-full left-0 right-0 mt-2 bg-gray-700 border border-gray-600 rounded-lg shadow-xl p-6 z-10 panel-exit"
         >
-          <div class="grid md:grid-cols-4 gap-6">
-            <div class="md:col-span-3 grid md:grid-cols-3 gap-6">
-              <div>
-                <h3 class="font-pixel text-lg text-red-500 mb-3">
-                  Interseção (E)
-                </h3>
-                <p class="text-xs text-gray-400 mb-3">
-                  COM TODOS estes tipos:
-                </p>
-                <div id="intersection-filters" class="grid grid-cols-2 gap-2"></div>
-              </div>
-              <div>
-                <h3 class="font-pixel text-lg text-blue-500 mb-3">União (OU)</h3>
-                <p class="text-xs text-gray-400 mb-3">
-                  COM PELO MENOS UM destes tipos:
-                </p>
-                <div id="union-filters" class="grid grid-cols-2 gap-2"></div>
-              </div>
-              <div>
-                <h3 class="font-pixel text-lg text-green-500 mb-3">
-                  Diferença (NÃO)
-                </h3>
-                <p class="text-xs text-gray-400 mb-3">
-                  SEM NENHUM destes tipos:
-                </p>
-                <div id="difference-filters" class="grid grid-cols-2 gap-2"></div>
-              </div>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div>
+              <h3 class="font-pixel text-lg text-red-500 mb-3">
+                Interseção (E)
+              </h3>
+              <p class="text-xs text-gray-400 mb-3">
+                COM TODOS estes tipos:
+              </p>
+              <div id="intersection-filters" class="grid grid-cols-2 gap-2"></div>
             </div>
             <div>
-              <h3 class="font-pixel text-lg text-indigo-400 mb-3">
-                Conjuntos Especiais
+              <h3 class="font-pixel text-lg text-blue-500 mb-3">União (OU)</h3>
+              <p class="text-xs text-gray-400 mb-3">
+                COM PELO MENOS UM destes tipos:
+              </p>
+              <div id="union-filters" class="grid grid-cols-2 gap-2"></div>
+            </div>
+            <div>
+              <h3 class="font-pixel text-lg text-green-500 mb-3">
+                Diferença (NÃO)
               </h3>
-              <p class="text-xs text-gray-400 mb-3">Filtrar por características:</p>
-              <div id="special-filters" class="flex flex-col gap-2"></div>
+              <p class="text-xs text-gray-400 mb-3">
+                SEM NENHUM destes tipos:
+              </p>
+              <div id="difference-filters" class="grid grid-cols-2 gap-2"></div>
             </div>
           </div>
 
