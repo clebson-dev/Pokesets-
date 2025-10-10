@@ -181,5 +181,4 @@ function setupEventListeners() {
   elements.exportBtn.addEventListener("click", handleExportClick);
 }
 
-// --- INICIALIZAÇÃO ---
 initializeApp();

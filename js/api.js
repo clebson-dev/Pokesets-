@@ -11,12 +11,12 @@ export async function fetchAllPokemon(startId, endId) {
     );
     const results = await Promise.all(promises);
     return results.map((data) => ({
-      id: data.id,
-      name: data.name,
+      id:     data.id,
+      name:   data.name,
       sprite: data.sprites.front_default,
-      types: data.types.map((t) => t.type.name),
-      stats: data.stats.map((s) => ({
-        name: s.stat.name,
+      types:  data.types.map((t) => t.type.name),
+      stats:  data.stats.map((s) => ({
+        name:  s.stat.name,
         value: s.base_stat,
       })),
     }));

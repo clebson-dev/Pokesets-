@@ -24,7 +24,7 @@ export const POKEMON_TYPES = [
 ];
 
 export const GENERATION_RANGES = {
-  1: { start: 1, end: 151 },
+  1: { start: 1  , end: 151 },
   2: { start: 152, end: 251 },
   3: { start: 252, end: 386 },
 };

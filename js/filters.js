@@ -7,6 +7,7 @@ import { POKEMON_TYPES } from "./config.js";
  * @param {Object} activeFilters - O objeto com os filtros a serem aplicados.
  * @returns {Array} A lista de Pokémon filtrada.
  */
+
 export function filterPokemon(allPokemon, activeFilters) {
   return allPokemon.filter((pokemon) => {
     const intersectionMatch =
@@ -27,6 +28,7 @@ export function filterPokemon(allPokemon, activeFilters) {
  * @param {string} formula - A string da fórmula, ex: "(fire ∩ flying) ∪ water".
  * @returns {Object} Um objeto de filtros.
  */
+
 export function parseFormula(formula) {
   const newFilters = { intersection: [], union: [], difference: [] };
   const cleanedFormula = formula.toLowerCase().trim();
@@ -70,6 +72,7 @@ export function parseFormula(formula) {
  * @param {Object} activeFilters - O objeto de filtros.
  * @returns {string} A string da fórmula.
  */
+
 export function generateFormulaFromFilters(activeFilters) {
   let parts = [];
   if (activeFilters.intersection.length > 0) {
