@@ -20,7 +20,9 @@
     <!-- Cabeçalho -->
     <header class="text-center py-8 bg-gray-800 border-b-4 border-yellow-400">
       <div class="flex justify-center items-center gap-4">
-        <h1 class="font-pixel text-3xl md:text-5xl text-yellow-400 drop-shadow-lg">
+        <h1
+          class="font-pixel text-3xl md:text-5xl text-yellow-400 drop-shadow-lg"
+        >
           PokéSets
         </h1>
         <select
@@ -93,9 +95,7 @@
         id="formula-container"
         class="relative bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-700 mb-8"
       >
-        <h3
-          class="font-pixel text-lg text-yellow-400 mb-3 text-center"
-        >
+        <h3 class="font-pixel text-lg text-yellow-400 mb-3 text-center">
           Digite sua Fórmula de Conjuntos
         </h3>
 
@@ -107,7 +107,9 @@
               class="w-full bg-gray-900 border-2 border-gray-600 rounded-lg pl-4 pr-44 py-2 text-gray-200 font-mono focus:border-yellow-500 focus:ring-0 transition-colors"
               placeholder="Ex: (fire ∩ flying) ∪ water \ poison"
             />
-            <div class="absolute inset-y-0 right-0 flex items-center pr-2 gap-1">
+            <div
+              class="absolute inset-y-0 right-0 flex items-center pr-2 gap-1"
+            >
               <button
                 id="op-intersect"
                 title="Interseção (E)"
@@ -164,19 +166,19 @@
             id="challenge-btn"
             class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
           >
-            🎲 Gerar
+            Gerar
           </button>
           <button
             id="share-btn"
             class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
           >
-            🔗 Compartilhar
+            Compartilhar
           </button>
           <button
             id="export-btn"
             class="bg-teal-600 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm"
           >
-            📋 Exportar Nomes
+            Exportar Nomes
           </button>
         </div>
 
@@ -190,10 +192,11 @@
               <h3 class="font-pixel text-lg text-red-500 mb-3">
                 Interseção (E)
               </h3>
-              <p class="text-xs text-gray-400 mb-3">
-                COM TODOS estes tipos:
-              </p>
-              <div id="intersection-filters" class="grid grid-cols-2 gap-2"></div>
+              <p class="text-xs text-gray-400 mb-3">COM TODOS estes tipos:</p>
+              <div
+                id="intersection-filters"
+                class="grid grid-cols-2 gap-2"
+              ></div>
             </div>
             <div>
               <h3 class="font-pixel text-lg text-blue-500 mb-3">União (OU)</h3>
@@ -206,9 +209,7 @@
               <h3 class="font-pixel text-lg text-green-500 mb-3">
                 Diferença (NÃO)
               </h3>
-              <p class="text-xs text-gray-400 mb-3">
-                SEM NENHUM destes tipos:
-              </p>
+              <p class="text-xs text-gray-400 mb-3">SEM NENHUM destes tipos:</p>
               <div id="difference-filters" class="grid grid-cols-2 gap-2"></div>
             </div>
           </div>
@@ -226,9 +227,7 @@
 
       <!-- Diagrama de Venn e Definição de Conjuntos -->
       <div id="venn-container" class="mb-8">
-        <h3
-          class="font-pixel text-lg text-yellow-400 mb-4 text-center"
-        >
+        <h3 class="font-pixel text-lg text-yellow-400 mb-4 text-center">
           Diagrama e Definição dos Conjuntos
         </h3>
         <div class="grid lg:grid-cols-2 gap-8 items-start">
@@ -251,9 +250,7 @@
 
       <!-- Análise e Classificação dos Conjuntos -->
       <div id="sets-analysis-container" class="mb-8">
-        <h3
-          class="font-pixel text-lg text-yellow-400 mb-4 text-center"
-        >
+        <h3 class="font-pixel text-lg text-yellow-400 mb-4 text-center">
           Análise e Classificação dos Conjuntos
         </h3>
         <div
@@ -271,9 +268,7 @@
         <p class="font-pixel text-2xl animate-pulse text-yellow-400">
           Carregando Pokémon...
         </p>
-        <p class="mt-4">
-          Por favor, aguarde. Estamos capturando os dados!
-        </p>
+        <p class="mt-4">Por favor, aguarde. Estamos capturando os dados!</p>
       </div>
 
       <div
