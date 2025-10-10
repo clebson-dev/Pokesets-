@@ -152,13 +152,86 @@ function updateVennSetsList(allPokemon, activeFilters) {
     .map((type, index) => {
       const setLetter = setLetters[index];
       const pokemonInSet = allPokemon.filter((p) => p.types.includes(type));
-      return `<div class="mb-2 break-words p-1 rounded transition-colors duration-300 cursor-pointer hover:bg-gray-700" data-type="${type}"><strong class="text-yellow-400 capitalize">${setLetter} (${type}), |${setLetter}|=${
-        pokemonInSet.length
-      }</strong> = {${pokemonInSet.map((p) => p.id).join(", ")}}</div>`;
+      const cardinalidade = pokemonInSet.length;
+      const pokemonIds = pokemonInSet.map((p) => p.id).join(", ");
+      return `<div class="mb-2 break-words p-1 rounded transition-colors duration-300 cursor-pointer hover:bg-gray-700" data-type="${type}"><strong class="text-yellow-400 capitalize">${setLetter} (${type}), |${setLetter}|=${cardinalidade}</strong> = {${pokemonIds}}</div>`;
     })
     .join("");
 
-  elements.vennSetsList.innerHTML = setsHtml; // Simple display for now
+  let operationsHtml = "";
+  if (uniqueTypes.length >= 2) {
+    operationsHtml =
+      '<hr class="my-4 border-gray-600"><h4 class="font-pixel text-base text-yellow-400 mb-3">Operações entre Conjuntos</h4>';
+    const sets = uniqueTypes.map((type, index) => ({
+      letter: setLetters[index],
+      elements: new Set(
+        allPokemon.filter((p) => p.types.includes(type)).map((p) => p.id)
+      ),
+    }));
+
+    for (let i = 0; i < sets.length; i++) {
+      for (let j = i + 1; j < sets.length; j++) {
+        const set1 = sets[i];
+        const set2 = sets[j];
+
+        if (i > 0 || j > 1) {
+          operationsHtml += `<hr class="my-3 border-gray-700 border-dashed">`;
+        }
+
+        const intersection = new Set(
+          [...set1.elements].filter((id) => set2.elements.has(id))
+        );
+        operationsHtml += `<div class="flex flex-wrap items-baseline mb-2"><div class="w-full sm:w-1/4 font-bold text-red-400">${
+          set1.letter
+        } ∩ ${set2.letter}</div><div class="w-full sm:w-1/4 text-gray-400">|${
+          set1.letter
+        }∩${set2.letter}| = ${
+          intersection.size
+        }</div><div class="w-full sm:w-1/2 break-words">= {${
+          [...intersection].sort((a, b) => a - b).join(", ") || "∅"
+        }}</div></div>`;
+
+        const union = new Set([...set1.elements, ...set2.elements]);
+        operationsHtml += `<div class="flex flex-wrap items-baseline mb-2"><div class="w-full sm:w-1/4 font-bold text-blue-400">${
+          set1.letter
+        } ∪ ${set2.letter}</div><div class="w-full sm:w-1/4 text-gray-400">|${
+          set1.letter
+        }∪${set2.letter}| = ${
+          union.size
+        }</div><div class="w-full sm:w-1/2 break-words">= {${[...union]
+          .sort((a, b) => a - b)
+          .join(", ")}}</div></div>`;
+
+        const diff1 = new Set(
+          [...set1.elements].filter((id) => !set2.elements.has(id))
+        );
+        operationsHtml += `<div class="flex flex-wrap items-baseline mb-2"><div class="w-full sm:w-1/4 font-bold text-green-400">${
+          set1.letter
+        } \\ ${set2.letter}</div><div class="w-full sm:w-1/4 text-gray-400">|${
+          set1.letter
+        }\\${set2.letter}| = ${
+          diff1.size
+        }</div><div class="w-full sm:w-1/2 break-words">= {${
+          [...diff1].sort((a, b) => a - b).join(", ") || "∅"
+        }}</div></div>`;
+
+        const diff2 = new Set(
+          [...set2.elements].filter((id) => !set1.elements.has(id))
+        );
+        operationsHtml += `<div class="flex flex-wrap items-baseline"><div class="w-full sm:w-1/4 font-bold text-green-400">${
+          set2.letter
+        } \\ ${set1.letter}</div><div class="w-full sm:w-1/4 text-gray-400">|${
+          set2.letter
+        }\\${set1.letter}| = ${
+          diff2.size
+        }</div><div class="w-full sm:w-1/2 break-words">= {${
+          [...diff2].sort((a, b) => a - b).join(", ") || "∅"
+        }}</div></div>`;
+      }
+    }
+  }
+
+  elements.vennSetsList.innerHTML = setsHtml + operationsHtml;
 }
 
 /** Analisa e classifica os conjuntos selecionados */
